@@ -1,0 +1,1 @@
+@-webkit-keyframes loadingSpinner{0%{background-position:0}to{background-position:-3968px}}.spinner{display:inline-block;width:64px;height:64px;-webkit-animation:loadingSpinner 2.5s steps(62) infinite;background-image:url(https://2tradingpost.staticwars.com/gw2/spinner/spinner-frames.ecbb432c.png)}

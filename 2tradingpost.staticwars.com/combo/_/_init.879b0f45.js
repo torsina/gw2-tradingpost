@@ -1,0 +1,1 @@
+GW2.start("css-gw2","app-ntp");

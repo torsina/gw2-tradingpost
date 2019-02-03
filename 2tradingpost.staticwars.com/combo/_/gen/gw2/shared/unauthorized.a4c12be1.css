@@ -1,0 +1,1 @@
+.unauthorized:not(.local-duo) .notice,.unauthorized:not(.local-duo)>*{display:none}.unauthorized:not(.local-duo)>.notice,.unauthorized:not(.local-duo)>.notice>*{display:block}.unauthorized:not(.local-duo) h1{color:#000;font-size:256%;margin:50px}.unauthorized:not(.local-duo) h1 a{color:#8ac6f2}
