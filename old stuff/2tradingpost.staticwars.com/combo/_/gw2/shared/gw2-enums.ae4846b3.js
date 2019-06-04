@@ -1,0 +1,110 @@
+YUI.add("gw2-enums", function(e) {
+    "use strict";
+    e.namespace("GW2").Enums = {
+        reverse: function(e, o) {
+            var n, a = this[e];
+            return Object.keys(a).some(function(e) {
+                return a[e] == o && (n = e), n
+            }), n
+        },
+        Profession: {
+            guardian: 1,
+            warrior: 2,
+            engineer: 3,
+            ranger: 4,
+            thief: 5,
+            elemental: 6,
+            mesmer: 7,
+            necro: 8,
+            revenant: 9
+        },
+        Rarity: {
+            basic: 1,
+            fine: 2,
+            masterwork: 3,
+            rare: 4,
+            exotic: 5,
+            ascended: 6,
+            legendary: 7
+        },
+        Categories: {
+            armor: 0,
+            back: 1,
+            bag: 2,
+            consumable: 3,
+            container: 4,
+            craftingmaterial: 5,
+            gathering: 6,
+            gizmo: 7,
+            minipet: 11,
+            tool: 13,
+            trinket: 15,
+            trophy: 16,
+            upgradecomponent: 17,
+            weapon: 18
+        },
+        Subcategory: {
+            "armor-coat": 0,
+            "armor-leggings": 1,
+            "armor-gloves": 2,
+            "armor-helm": 3,
+            "armor-helmaquatic": 4,
+            "armor-boots": 5,
+            "armor-shoulders": 6,
+            "consumable-booze": 3001,
+            "consumable-food": 3003,
+            "consumable-generic": 3005,
+            "consumable-transmutation": 3009,
+            "consumable-unlock": 3010,
+            "consumable-utility": 3014,
+            "container-default": 4e3,
+            "container-giftbox": 4001,
+            "gathering-foraging": 6e3,
+            "gathering-logging": 6001,
+            "gathering-mining": 6002,
+            "gizmo-default": 7e3,
+            "gizmo-salvage": 7002,
+            "tool-crafting": 13e3,
+            "tool-salvage": 13002,
+            "trinket-accessory": 15e3,
+            "trinket-amulet": 15001,
+            "trinket-ring": 15002,
+            "upgradecomponent-weapon": 17003,
+            "upgradecomponent-armor": 17002,
+            "upgradecomponent-trinket": 17001,
+            "upgradecomponent-infusion": 17e3,
+            "weapon-sword": 18e3,
+            "weapon-hammer": 18001,
+            "weapon-bowlong": 18002,
+            "weapon-bowshort": 18003,
+            "weapon-axe": 18004,
+            "weapon-dagger": 18005,
+            "weapon-greatsword": 18006,
+            "weapon-mace": 18007,
+            "weapon-pistol": 18008,
+            "weapon-rifle": 18010,
+            "weapon-scepter": 18011,
+            "weapon-staff": 18012,
+            "weapon-focus": 18013,
+            "weapon-torch": 18014,
+            "weapon-warhorn": 18015,
+            "weapon-shield": 18016,
+            "weapon-harpoon": 18019,
+            "weapon-speargun": 18020,
+            "weapon-trident": 18021,
+            "weapon-toy": 18022
+        },
+        ItemLocationType: {
+            none: 0,
+            agent: 1,
+            equipment: 2,
+            inventory: 3,
+            "inventory-account": 4,
+            "inventory-bag-slot": 5,
+            "inventory-overflow": 6,
+            lootable: 7,
+            vendor: 8,
+            "inventory-quickslot": 9
+        }
+    }
+});

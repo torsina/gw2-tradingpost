@@ -1,0 +1,1 @@
+.hbox{flex-direction:row}.hbox,.vbox{display:flex;align-items:stretch}.vbox{flex-direction:column}.boxFlex0{flex:0}.boxFlex,.boxFlex1,.spacer{flex:1}.boxFlex2{flex:2}.start{justify-content:flex-start}.end{justify-content:flex-end}.center{justify-content:center}

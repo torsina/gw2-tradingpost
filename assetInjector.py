@@ -2,8 +2,12 @@ from pathlib import Path
 import os
 class AssetInjector:
     def __init__(self):
-        self.newJs = open("mainFiles/js/prefetch.js", "r").read()
-        self.newHtml = open("mainFiles/html/TP.html", "r").read()
+        self.newJs = open("mainFiles/js/prefetch_96479.js", "r").read()
+        self.newHtml = open("mainFiles/html/TP_96479.html", "r").read()
+        self.injectedScript = open("./bot.js").read()
+        self.promisePolyfill = open("./promise-polyfill.js", "r").read()
+        self.newHtml = self.newHtml.replace("__PLACEHOLDER__", str(self.promisePolyfill) + "\n" + str(self.injectedScript))
+        print(self.newHtml)
         self.isWorking = False
 
 
@@ -31,7 +35,7 @@ class AssetInjector:
             flow.response.headers["Expires"] = "0"
             print("tradingpost html inject")
             flow.response.text = self.newHtml
-
+        """
         # tradingpost asset injector
         if "2tradingpost.staticwars.com" in flow.request.pretty_url:
             flow.response.headers["cache-control"] = "no-cache, no-store, must-revalidate"
@@ -83,6 +87,7 @@ class AssetInjector:
                     newFile = open("./" + path, "wb")
                     newFile.write(flow.response.content)
                     newFile.close()
+        """
 
 def join_l(l, sep):
     li = iter(l)

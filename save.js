@@ -1,48 +1,16 @@
-socket = io('http://localhost:3000');
-socket.on('connect', function () {
-    socket.emit("greet", "starting from tradingpost");
-    var loop = function () {
-        setTimeout(function () {
-            if (GW2.user !== undefined) {
-                socket.emit("greet", "working from tradingpost with account: " + GW2.user.user_name);
-                socket.emit("loginData", CircularJSON.stringify(GW2.user))
-            } else {
-                loop();
-            }
-        }, 100);
-    };
-    loop();
 
-});
+/**
+ window.Y._ownNamespace = {};
+ const _namespace = window.Y._ownNamespace;
 
-
-socket.on('code', function (code) {
-    socket.emit("receivedCode", code);
-    try {
-        var result = eval(code);
-        socket.emit("return", CircularJSON.stringify(result))
-    } catch (e) {
-        socket.emit("eval error", CircularJSON.stringify(e))
-    }
-});
-
-window._ownNamespace = {};
-var _namespace = window._ownNamespace;
-
-window._ownNamespace.foo = function () {
-    return new Promise(function (resolve, reject) {
-        resolve("foo");
-    })
-};
-
-window._ownNamespace.getBuild = function () {
+ _namespace.getBuild = function () {
     return new Promise(function (resolve, reject) {
         window.native.call("GetBuildInfo").then(function (data) {
             resolve(data.id)
         })
     })
 };
-_namespace.getListings = function (id) {
+ _namespace.getListings = function (id) {
     var request = {
         protocol: 'Game.gw2.Trade',
         command: 'GetListings',
@@ -58,7 +26,7 @@ _namespace.getListings = function (id) {
         })
     });
 };
-_namespace.buyOrder = function (id, price, quantity) {
+ _namespace.buyOrder = function (id, price, quantity) {
     var request = {
         protocol: 'Game.gw2.Trade',
         command: 'Buy',
@@ -72,7 +40,7 @@ _namespace.buyOrder = function (id, price, quantity) {
         })
     });
 };
-_namespace.instantBuy = function (id, price, quantity) {
+ _namespace.instantBuy = function (id, price, quantity) {
     var request = {
         protocol: 'Game.gw2.Trade',
         command: 'Buy',
@@ -86,7 +54,7 @@ _namespace.instantBuy = function (id, price, quantity) {
         })
     });
 };
-_namespace.searchByIds = function (ids) {
+ _namespace.searchByIds = function (ids) {
     var request = {
         protocol: 'Game.gw2.ItemSearch',
         command: 'TradeSearch',
@@ -107,16 +75,14 @@ _namespace.searchByIds = function (ids) {
         })
     });
 };
-_namespace.inventoryGetDataIds = function () {
-    var results = [];
-    window.native.stats.inventory.forEach(function(element) {
-        results.push(element.dataId);
-    });
-    return results;
+ _namespace.inventoryGetDataIds = function () {
+    return window.native.stats.inventory.map(function(element) {
+        return element.dataId;
+    })
 };
-_namespace.itemByDataId = function (itemId) {
+ _namespace.itemByDataId = function(itemId) {
     var returnValue;
-    window.native.stats.inventory.some(function (inventoryItem) {
+    window.native.stats.inventory.some(function(inventoryItem) {
         if (inventoryItem.dataId === itemId) {
             returnValue = inventoryItem;
             return true
@@ -124,51 +90,49 @@ _namespace.itemByDataId = function (itemId) {
     });
     return returnValue;
 };
-_namespace.itemCountByDataId = function (itemId) {
-    return window.native.stats.inventory.reduce(function (accumulator, currentValue) {
+ _namespace.itemCountByDataId = function(itemId) {
+    return window.native.stats.inventory.reduce(function(accumulator, currentValue) {
         // if the item we're passing through is equal to itemId
-        if (currentValue.dataId === itemId) {
+        if(currentValue.dataId === itemId) {
             return accumulator + currentValue.count;
         } else {
             return accumulator;
         }
     }, 0) // 0 is starting point of counter (the accumulator)
 };
-_namespace.getInventory = function (id) {
+ _namespace.getInventory = function (id) {
     return new Promise(function (resolve, reject) {
         var itemId = _namespace.itemByDataId(id).itemId;
         var itemsInInventory = _namespace.itemCountByDataId(id);
-        resolve({id: itemId, quantity: itemsInInventory});
+        resolve({ id: itemId, quantity: itemsInInventory});
     })
 };
-_namespace.searchByName = function (name) {
+ _namespace.searchByName = function (name) {
+    var request = {
+        protocol: 'Game.gw2.ItemSearch',
+        command: 'TradeSearch',
+        headers: {c: 'application/json'},
+        body:
+            '{"LevelMin":0,"LevelMax":80,"AvailableOnly":1,"Text":"' + name + '","Language":"en","BuildId":' + _namespace.buildId + ',"Sort":false,"Count":500}',
+        type: 'One'
+    };
     return new Promise(function (resolve, reject) {
-        _namespace.getBuild().then(function (buildId) {
-            var request = {
-                protocol: 'Game.gw2.ItemSearch',
-                command: 'TradeSearch',
-                headers: {c: 'application/json'},
-                body:
-                    '{"LevelMin":0,"LevelMax":80,"AvailableOnly":1,"Text":"' + name + '","Language":"en","BuildId":' + buildId + ',"Sort":false,"Count":500}',
-                type: 'One'
-            };
-            window.native.call("stsRequest", request).then(function (searchResult) {
-                resolve(searchResult);
-            })
-        });
-    });
+        window.native.call("stsRequest", request).then(function (searchResult) {
+            resolve(searchResult);
+        })
+    })
 };
-//GetListings
-//TradeSearch on whole inventory (prolly due to refresh of sale page
-//SellItem
-//GetSaleStatus
-//GetListings
-_namespace.doSell = function (id, name, price, quantity, uuid) {
+ //GetListings
+ //TradeSearch on whole inventory (prolly due to refresh of sale page
+ //SellItem
+ //GetSaleStatus
+ //GetListings
+ _namespace.doSell = function (id, name, price, quantity, uuid) {
     _namespace.getInventory(id).then(function (inventoryCheck) { // check that we have item in inventory
         var sellId = inventoryCheck.id;
         var itemsInInventory = inventoryCheck.quantity;
-        if (itemsInInventory < quantity) {
-            return _namespace.failedTransaction(uuid, 5, {inInventory: itemsInInventory});
+        if(itemsInInventory < quantity) {
+            return _namespace.failedTransaction(uuid, 5, { inInventory: itemsInInventory });
         }
         _namespace.getListings(id).then(function (listings) { // check the listings to simulate normal process
             var inventoryIds = _namespace.inventoryGetDataIds();
@@ -181,15 +145,13 @@ _namespace.doSell = function (id, name, price, quantity, uuid) {
                             count: quantity
                         }).then(function (transactionCallback) {
                             var saleStatusRequest = {
-                                "protocol": "Game.gw2.Trade",
-                                "command": "GetSaleStatus",
-                                "headers": {
+                                "protocol":"Game.gw2.Trade",
+                                "command":"GetSaleStatus",
+                                "headers":{
                                     "m": window.native._stats.sessionId,
-                                    "c": "application/json"
-                                },
-                                "body": "{\"SequenceId\":" + transactionCallback.sequenceId + "}",
-                                "type": "One"
-                            };
+                                    "c":"application/json"},
+                                "body":"{\"SequenceId\":" + transactionCallback.sequenceId + "}",
+                                "type":"One"};
                             window.native.call("stsRequest", saleStatusRequest).then(function (saleStatusCallback) {
 
                             });
@@ -203,8 +165,8 @@ _namespace.doSell = function (id, name, price, quantity, uuid) {
         })
     });
 };
-//window.native.call("SellItem", {id: parseInt(49428, 10),price: 4771, count: 1}).then(function (transactionCallback) {socket.emit("return", CircularJSON.stringify(transactionCallback));})
-_namespace.doBuy = function (id, name, price, quantity, uuid) {
+ //window.native.call("SellItem", {id: parseInt(49428, 10),price: 4771, count: 1}).then(function (transactionCallback) {socket.emit("return", CircularJSON.stringify(transactionCallback));})
+ _namespace.doBuy = function (id, name, price, quantity, uuid) {
     _namespace.searchByName(name).then(function (searchData) { // simulate that user search for item in buy tab
         _namespace.getListings(id).then(function (listings) { // check the listings to simulate normal process
             _namespace.validate(uuid, listings).then(function (validation) { // send listings with uuid to server to check that profit is still here
@@ -223,7 +185,7 @@ _namespace.doBuy = function (id, name, price, quantity, uuid) {
         })
     })
 };
-_namespace.validate = function (uuid, listings) {
+ _namespace.validate = function (uuid, listings) {
     return new Promise(function (resolve, reject) {
         socket.emit("validateRequest", {uuid: uuid, listings: listings});
         var listen = function () {
@@ -234,15 +196,21 @@ _namespace.validate = function (uuid, listings) {
         }
     });
 };
-_namespace.successTransaction = function (uuid) {
+ _namespace.successTransaction = function (uuid) {
     return new Promise(function (resolve, reject) {
         socket.emit("successTransaction", {uuid: uuid})
     });
 };
-_namespace.failedTransaction = function (uuid, code, state) {
+ _namespace.failedTransaction = function (uuid, code, state) {
     return new Promise(function (resolve, reject) {
         socket.emit("failedTransaction", {uuid: uuid, code: code, state: state})
     });
 };
+ **/
+window.native.call("GetBuildInfo").then(function (data) {return socket.emit("return", CircularJSON.stringify(data))}).catch(function() {socket.emit("return", "fail")});
+CircularJSON.stringify(window._ownNamespace.getBuild());
+eval("Object.keys(window._ownNamespace.getBuild());");
+window._ownNamespace.getBuild().then(function(data) { socket.emit("return", data)});
 
-
+window._ownNamespace.getBuild().then(function(data) { socket.emit("return", data)});
+window._ownNamespace.searchByName("Superior Sigil of").then(function(data) { socket.emit("return", CircularJSON.stringify(data))});
